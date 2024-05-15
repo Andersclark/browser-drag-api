@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <meta name="author" content="Anders Clark" />
+  <meta name="description" content="Trying out browser Drag API">
+  <meta name="keywords" content="HTML, CSS, JavaScript">
+  <title>Drag API</title>
+</head>
+<body>
+<main>
+  <div draggable='true' id='draggable' class='draggable' style='position: absolute'></div>  
+</main>
+<footer>Built with 🫀 by Anders Clark</footer>
+</body>
+</html>
+<script>
+  function addDragEventListeners(el){
+    el.addEventListener('dragenter', (event) => {
+      event.effectAllowed = 'move'
+      event.target.style.backgroundColor = 'black'
+     event.preventDefault()
+    })
+    el.addEventListener('dragover', (event) => {
+      event.preventDefault()
+    })
+    el.addEventListener('drop', (event)=>{
+      const dropData = event.dataTransfer.getData('ID')
+      const draggedEl = document.getElementById(dropData)
+      const top = event.clientY
+      const left = event.clientX
+      draggedEl.style.top = `${top}px`
+      draggedEl.style.left = `${left}px`
+      event.target.style.backgroundColor = 'grey'
+      event.preventDefault()
+    })
+  }
+  
+  function makeBox(){
+    const box = document.createElement('div')
+    box.classList.add('box')
+    box.style.backgroundColor = `rgba(${Math.round(Math.random()*255)}, ${Math.round(Math.random()*255)}, ${Math.round(Math.random()*255)}, 1)`
+    return box
+  }
+
+  const main = document.querySelector('main')
+  
+  let divCount = 0
+  do {
+    const box = makeBox()
+    addDragEventListeners(box)
+    main.appendChild(box)
+    divCount++
+  } while (divCount < 100)
+
+  main.addEventListener('dragstart', (event) => {
+    event.target.style.background = 'none'
+    event.target.style.backgroundColor = 'white'
+    event.target.style.border = '5px solid grey'
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('ID', event.target.id)
+  });
+
+</script>
+<style>
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+  main {
+    width: 100dvw;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+  }
+  .box {
+    width: 10dvw;
+    height: 10dvw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .draggable {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 75px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(white 30%, grey 30%, black 50%);
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  footer {
+    height: 15dvh;
+    padding: 16px 32px;
+    background-color: white;
+    font-size: 36px;
+    text-align: center;
+    font-family: monospace;
+  }
+</style>
